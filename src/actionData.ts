@@ -236,7 +236,6 @@ export async function getIntermediateRewards(
 }
 
 export interface Validator {
-    weight: U64;
     delegation: U64;
     deposit: U64;
     pubkey: H512;
@@ -256,15 +255,14 @@ export async function getValidators(
     }
     const decoded = RLP.decode(Buffer.from(data, "hex"));
     function isValidatorShape(entry: any): entry is Buffer[] {
-        return entry != null && Array.isArray(entry) && entry.length === 4;
+        return entry != null && Array.isArray(entry) && entry.length === 3;
     }
     if (!isArrayOf<Buffer[]>(decoded, isValidatorShape)) {
         throw new Error(
-            "Expected a rlp of Buffer[4][], but an invalid shaped value"
+            "Expected a rlp of Buffer[3][], but an invalid shaped value"
         );
     }
-    return decoded.map(([weight, delegation, deposit, pubkey]) => ({
-        weight: decodeU64(weight),
+    return decoded.map(([delegation, deposit, pubkey]) => ({
         delegation: decodeU64(delegation),
         deposit: decodeU64(deposit),
         pubkey: decodeH512(pubkey)
